@@ -20,12 +20,21 @@ uint16_t concat_bytes (uint8_t high, uint8_t low) {
 	return (high16 | low);
 }
 
+int16_t concat_bytes_signed (int8_t high, int8_t low){
+	int16_t high16 = high << 8;
+	return (high16 | low);
+}
+
 void split_bytes (int16_t value, int8_t* result) {
 	result[0] = value >> 8;
 	result[1] = value;
 }
 
 void number2String(uint16_t value, char* result) {
+	sprintf(result, "%i", value);
+}
+
+void number2StringSigned(int16_t value, char* result) {
 	sprintf(result, "%i", value);
 }
 

@@ -26,6 +26,8 @@
 
 #include <avr/io.h>
 
+void read_values_signed(uint8_t packetid, int8_t* data, uint8_t length);
+
 /**
  * initializes Roomba (sets start and safe mode)
  */
@@ -176,7 +178,5 @@ uint8_t p_follow_line(uint16_t cliffLeft, uint16_t cliffRight, int16_t velocity)
  * @return 1 if correction was necessary, 0 if not
  */
 uint8_t pid_follow_line(uint16_t cliffLeft, uint16_t cliffRight, int16_t velocity);
-
-uint16_t coder_values_r(void);
 
 #endif

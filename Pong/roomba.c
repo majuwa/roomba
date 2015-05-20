@@ -32,6 +32,14 @@ void read_values(uint8_t packetid, uint8_t * data, uint8_t length) {
 	}
 }
 
+void read_values_signed(uint8_t packetid, int8_t* data, uint8_t length) {
+	send_byte_roomba(142);
+	send_byte_roomba(packetid);
+	for(uint8_t i = 0; i <  length; i++) {
+		data[i] = receive_byte_roomba();
+	}
+}
+
 void drive(int16_t velocity) {
 	drive_wheels(velocity, velocity);
 }
@@ -69,20 +77,22 @@ void drive_roomba_clicks(uint16_t distance, int16_t velocity) {
 	
 	uint16_t clicks_finish = distance * CLICKS_PER_MM;
 
-
+	uint8_t ticks_r [2];
+	read_values(43, ticks_r, 2);
 	
 	uint16_t counter = 0;
-	uint16_t start = coder_values_r();
+	uint16_t start = concat_bytes(ticks_r[0], ticks_r[1]);
 
 	drive(velocity);
 	
 	my_msleep(200);
 
 	while(counter < clicks_finish) {
+		read_values(43, ticks_r, 2);
 		if(velocity < 0)
-			counter = start - coder_values_r();
+			counter = start - concat_bytes(ticks_r[0], ticks_r[1]);
 		else
-			counter = coder_values_r() - start;
+			counter = concat_bytes(ticks_r[0], ticks_r[1]) - start;
 	}
 	stop();
 }
@@ -320,8 +330,4 @@ uint8_t pid_follow_line(uint16_t cliffLeft, uint16_t cliffRight, int16_t velocit
 	set_Display(test);
 	return 0;
 }
-uint16_t coder_values_r(){
-		uint8_t ticks_r [2];
-	read_values(43, ticks_r, 2);
-	return concat_bytes(ticks_r[0], ticks_r[1]);
-}
+
