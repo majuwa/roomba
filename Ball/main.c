@@ -10,9 +10,11 @@ int main(int argc, char* argv[]){
 	initialize_ball();
 	while(1){
 		int8_t wall = is_wall();
-		char string[6];
-		number2String(wall,string);
-		set_Display(string);
+		char string = "WALL";
+		if(wall)
+			set_Display(string);
+		else
+			set_Display("____");
 	}
 	return 0;
 }
