@@ -7,12 +7,12 @@
 #define CLIFF_R 1
 #define NO_CLIFF 0
 
-int16_t get_angle(void);
+int16_t get_angle ( void );
 
-void initialize_ball(void);
+void initialize_ball ( void );
 
-int8_t is_wall(void);
+int8_t is_wall ( void );
 
-void checkSide(void);
+void checkSide ( void );
 
 #endif

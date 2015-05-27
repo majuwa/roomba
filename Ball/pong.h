@@ -3,6 +3,6 @@
 #include <avr/io.h>
 #define PONG_SPEED 150
 #define PONG_RESET 5
-void initialize_pong(void);
+void initialize_pong ( void );
 void drive_pong();
 #endif
