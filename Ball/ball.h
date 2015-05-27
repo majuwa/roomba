@@ -13,6 +13,10 @@ void initialize_ball ( void );
 
 int8_t is_wall ( void );
 
-void checkSide ( void );
+int8_t check_side ( void );
+
+int16_t calc_new_angle ( int8_t cliff );
+
+void drive_ball ( int16_t velocity );
 
 #endif

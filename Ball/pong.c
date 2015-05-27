@@ -24,7 +24,7 @@ void initialize_pong()
 void drive_pong()
 {
     uint16_t value = coder_values_r();
-    int16_t difference = ( int16_t ) ( value -start_counter );
+    int16_t difference = ( int16_t ) ( value - start_counter );
 
     uint8_t ir_value;
     read_values ( 17, &ir_value, 1 );

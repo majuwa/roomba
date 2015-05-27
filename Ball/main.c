@@ -3,6 +3,8 @@
 #include "roomba.h"
 #include "tools.h"
 #include "pong.h"
+#include "ball.h"
+
 int main ( int argc, char* argv[] )
 {
     usart_init_roomba();
@@ -10,13 +12,8 @@ int main ( int argc, char* argv[] )
     while ( !read_button ( BUTTON_CLEAN ) );
     initialize_ball();
     while ( 1 ) {
-        int8_t wall = is_wall();
-        char string = "WALL";
-        if ( wall ) {
-            set_Display ( string );
-        } else {
-            set_Display ( "____" );
-        }
+		drive(150);
+		drive_ball(150);
     }
     return 0;
 }

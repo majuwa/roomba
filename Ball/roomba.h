@@ -179,4 +179,6 @@ uint8_t p_follow_line ( uint16_t cliffLeft, uint16_t cliffRight, int16_t velocit
  */
 uint8_t pid_follow_line ( uint16_t cliffLeft, uint16_t cliffRight, int16_t velocity );
 
+uint16_t coder_values_r ( void );
+
 #endif
