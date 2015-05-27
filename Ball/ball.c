@@ -36,13 +36,8 @@ int8_t is_wall()
     return 0;// wall_sensor;
 }
 
-int8_t check_side()
+int8_t check_side(uint16_t cliffL, uint16_t cliffR)
 {
-    uint8_t packetIDs [] = {29, 30};
-    uint8_t datas [4];
-    multiple_sensors ( packetIDs, datas, 4, 2 );
-    uint16_t cliffL = concat_bytes ( datas[0], datas[1] );
-    uint16_t cliffR = concat_bytes ( datas[2], datas[3] );
     int16_t difference = ( int16_t ) ( cliffL - cliffR );
 
     if ( difference > 400 ) {
@@ -81,9 +76,22 @@ int16_t calc_new_angle (int8_t cliff)
 
 void drive_ball (int16_t velocity)
 {
-	int8_t cliff = check_side();
+	uint8_t packetIDs [] = {29, 30,13,45};
+    uint8_t datas [6];
+    multiple_sensors ( packetIDs, datas, 6, 4 );
+    int8_t cliff =  check_side(concat_bytes ( datas[0], datas[1] ),concat_bytes ( datas[2], datas[3] ));
 	int16_t new_angle = calc_new_angle(cliff);
-	
+    if(datas[4]){
+		char* string1 = "GOAL";
+		set_Display(string1);
+		stop();
+		return;
+	}
+	if(datas[5] > 0){
+		stop();
+		turn(180);
+	}
+	/*
 	char string[6];
 	number2String(new_angle, string);
 	set_Display(string);
@@ -94,5 +102,5 @@ void drive_ball (int16_t velocity)
 		turn(new_angle);
 		drive(velocity);
 	}
-	my_msleep(30);
+	my_msleep(30);*/
 }
