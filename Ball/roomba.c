@@ -263,6 +263,84 @@ void turn ( int16_t degree )
     stop();
 }
 
+void turn2 ( int16_t degree, int16_t velocity )
+{
+	int8_t velocityB [2];
+    int8_t radiusB [2];
+
+    split_bytes ( velocity, velocityB );
+
+    int16_t posDeg;
+
+    if ( degree < 0 ) {
+        posDeg = -degree;
+        split_bytes ( -1, radiusB );
+    } else {
+        posDeg = degree;
+        split_bytes ( 1, radiusB );
+    }
+
+    const float radValue = M_PI / 180;
+    uint16_t wheel_distance = CLICKS_PER_MM * WHEEL_2_CENTER * posDeg * radValue;
+
+    uint8_t ticks_r [2];
+    read_values ( 43, ticks_r, 2 );
+    uint16_t counter_r = 0;
+    uint16_t start_r = concat_bytes ( ticks_r[0], ticks_r[1] );
+    
+    uint8_t ticks_l [2];
+    read_values ( 44, ticks_l, 2 );
+    uint16_t counter_l = 0;
+    uint16_t start_l = concat_bytes ( ticks_l[0], ticks_l[1] );
+
+
+    send_byte_roomba ( 137 );
+    send_byte_roomba ( velocityB[0] );
+    send_byte_roomba ( velocityB[1] );
+    send_byte_roomba ( radiusB[0] );
+    send_byte_roomba ( radiusB[1] );
+
+    my_msleep ( 200 );
+    
+    uint8_t drivep_r = 1;
+    uint8_t drivep_l = 1;
+    int16_t velocity_r = velocity;
+    int16_t velocity_l = velocity;
+    
+    while ( drivep_r || drivep_l)
+    {
+		read_values ( 43, ticks_r, 2 );
+		read_values ( 44, ticks_l, 2 );
+		
+		if ( degree > 0 )
+		{
+			counter_r = start_r - concat_bytes ( ticks_r[0], ticks_r[1] );
+			counter_l = concat_bytes ( ticks_l[0], ticks_l[1] ) - start_l;
+		} 
+		else
+		{
+			counter_l = start_l - concat_bytes ( ticks_l[0], ticks_l[1] );
+			counter_r = concat_bytes ( ticks_r[0], ticks_r[1] ) - start_r;
+		}	
+		
+		if( drivep_r && counter_r > wheel_distance)
+		{
+			drivep_r = 0;
+			velocity_r = 0;
+			drive_wheels(velocity_r, velocity_l);
+		}
+		
+		if( drivep_l && counter_l > wheel_distance)
+		{
+			drivep_l = 0;
+			velocity_l = 0;
+			drive_wheels(velocity_r, velocity_l);
+		}
+	}
+    stop();
+}
+
+
 uint8_t backup_collision ( uint16_t degree, uint8_t bump )
 {
 

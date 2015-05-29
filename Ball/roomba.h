@@ -181,4 +181,6 @@ uint8_t pid_follow_line ( uint16_t cliffLeft, uint16_t cliffRight, int16_t veloc
 
 uint16_t coder_values_r ( void );
 
+void turn2 ( int16_t degree, int16_t velocity );
+
 #endif
