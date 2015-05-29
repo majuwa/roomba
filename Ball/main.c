@@ -11,8 +11,9 @@ int main ( int argc, char* argv[] )
     roomba_init();
     while ( !read_button ( BUTTON_CLEAN ) );
     initialize_ball();
+    	//	drive(150);
+		
     while ( 1 ) {
-		drive(150);
 		drive_ball(150);
     }
     return 0;

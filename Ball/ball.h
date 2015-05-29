@@ -7,7 +7,12 @@
 #define CLIFF_R 1
 #define NO_CLIFF 0
 
-
+#define LIGHT_BUMPER_LEFT 1
+#define LIGHT_BUMPER_FRONT_LEFT 2
+#define LIGHT_BUMPER_CENTER_LEFT 4
+#define LIGHT_BUMPER_CENTER_RIGHT 8
+#define LIGHT_BUMPER_FRONT_RIGHT 16
+#define LIGHT_BUMPER_RIGHT 32
 
 int16_t get_angle ( void );
 
@@ -21,5 +26,6 @@ int16_t calc_new_angle ( int8_t cliff );
 
 void drive_ball ( int16_t velocity );
 
+int8_t is_pong(uint8_t value);
 
 #endif
