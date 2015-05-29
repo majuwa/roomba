@@ -73,7 +73,28 @@ int16_t calc_new_angle (int8_t cliff)
 	
 	return 0;
 }
-
+int8_t is_pong(uint8_t value){
+	switch(value){
+		case LIGHT_BUMPER_LEFT:
+			set_Display("LEFT");
+			break;
+		case LIGHT_BUMPER_FRONT_LEFT:
+			set_Display("L-Le");
+			break;
+		case LIGHT_BUMPER_CENTER_LEFT | LIGHT_BUMPER_CENTER_RIGHT:
+			set_Display("Cent");
+			break;
+		case LIGHT_BUMPER_FRONT_RIGHT:
+			set_Display("L-Ri");
+			break;
+		case LIGHT_BUMPER_RIGHT:
+			set_Display("Rigt");
+			break;
+		default:
+			return 0;
+		}
+		return 1;
+}
 void drive_ball (int16_t velocity)
 {
 	uint8_t packetIDs [] = {29, 30,13,45};
@@ -87,11 +108,12 @@ void drive_ball (int16_t velocity)
 		stop();
 		return;
 	}
-	if(datas[5] > 0){
+	if(is_pong(datas[5])){
 		stop();
-		turn(180);
+		return;
+		//turn(180);
 	}
-	
+	/*
 	char string[6];
 	number2String(new_angle, string);
 	set_Display(string);
@@ -101,6 +123,6 @@ void drive_ball (int16_t velocity)
 		stop();
 		turn(new_angle);
 		drive(velocity);
-	}
+	}*/
 	my_msleep(30);
 }
