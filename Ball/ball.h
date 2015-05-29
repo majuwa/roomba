@@ -7,7 +7,7 @@
 #define CLIFF_R 1
 #define NO_CLIFF 0
 
-#define 
+
 
 int16_t get_angle ( void );
 

@@ -22,7 +22,7 @@
 #define IR_0 129
 
 #define CLICKS_PER_MM 2.25
-#define WHEEL_2_CENTER 110
+#define WHEEL_2_CENTER 115
 
 #include <avr/io.h>
 

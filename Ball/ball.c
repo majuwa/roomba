@@ -91,7 +91,7 @@ void drive_ball (int16_t velocity)
 		stop();
 		turn(180);
 	}
-	/*
+	
 	char string[6];
 	number2String(new_angle, string);
 	set_Display(string);
@@ -102,5 +102,5 @@ void drive_ball (int16_t velocity)
 		turn(new_angle);
 		drive(velocity);
 	}
-	my_msleep(30);*/
+	my_msleep(30);
 }
