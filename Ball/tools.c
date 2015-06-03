@@ -54,3 +54,6 @@ void string_concat ( char* name, char* value, char* result )
 {
     sprintf ( result, "%s : %s", name, value );
 }
+int16_t rand_tools(int16_t start, int16_t end){
+  return rand()%(end-start + 1) + start;
+}

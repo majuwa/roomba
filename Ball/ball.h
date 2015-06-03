@@ -26,6 +26,6 @@ int16_t calc_new_angle ( int8_t cliff );
 
 void drive_ball ( int16_t velocity );
 
-int8_t is_pong(uint8_t value);
+int16_t is_pong(uint16_t* value);
 
 #endif

@@ -7,14 +7,15 @@
 
 int main ( int argc, char* argv[] )
 {
-    usart_init_roomba();
-    roomba_init();
-    while ( !read_button ( BUTTON_CLEAN ) );
-    initialize_ball();
-    	//	drive(150);
-		
-    while ( 1 ) {
-		drive_ball(150);
-    }
-    return 0;
+        usart_init_roomba();
+        roomba_init();
+        while ( !read_button ( BUTTON_CLEAN ) );
+        initialize_ball();
+
+
+        while ( 1 ) {
+                drive ( 200 );
+                drive_ball ( 200 );
+        }
+        return 0;
 }
