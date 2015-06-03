@@ -221,6 +221,7 @@ void turn ( int16_t degree )
 {
         int8_t velocity [2];
         int8_t radiusB [2];
+<<<<<<< HEAD
 
         split_bytes ( 100, velocity );
 
@@ -273,15 +274,15 @@ void turn2 ( int16_t degree, int16_t velocity )
     int16_t posDeg;
 
     if ( degree < 0 ) {
-        posDeg = -degree;
-        split_bytes ( -1, radiusB );
-    } else {
-        posDeg = degree;
-        split_bytes ( 1, radiusB );
-    }
+                posDeg = -degree;
+                split_bytes ( -1, radiusB );
+        } else {
+                posDeg = degree;
+                split_bytes ( 1, radiusB );
+        }
 
-    const float radValue = M_PI / 180;
-    uint16_t wheel_distance = CLICKS_PER_MM * WHEEL_2_CENTER * posDeg * radValue;
+        const float radValue = M_PI / 180;
+        uint16_t wheel_distance = CLICKS_PER_MM * WHEEL_2_CENTER * posDeg * radValue;
 
     uint8_t ticks_r [2];
     read_values ( 43, ticks_r, 2 );
