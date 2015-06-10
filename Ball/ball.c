@@ -18,7 +18,7 @@ void initialize_ball()
 {
         get_angle();
         srand ( coder_values_r() );
-        turn ( rand() %40-20 );
+       // turn ( rand() %40-20 );
 }
 
 int8_t is_wall()
@@ -41,8 +41,14 @@ int8_t is_wall()
 int8_t check_side ( uint16_t cliffL, uint16_t cliffR )
 {
         int16_t difference = ( int16_t ) ( cliffL - cliffR );
-
+	if(cliffL < 2000 && cliffR < 2000)
+	  return NO_CLIFF;
         if ( difference > 400 ) {
+		//char t_string[6] = {0}; 
+		//number2Hex(cliffL,t_string);
+		//set_Display(t_string);
+		//stop();
+		//my_msleep(20000);
                 return CLIFF_L;
         } else if ( difference < -400 ) {
                 return CLIFF_R;
@@ -100,15 +106,15 @@ void drive_ball ( int16_t velocity )
         uint8_t datas [18];
         uint16_t l_bumpers[6];
         multiple_sensors ( packetIDs, datas, 18, 10 );
+	char string[6] = {0};
         int8_t cliff =  check_side ( concat_bytes ( datas[0], datas[1] ),concat_bytes ( datas[2], datas[3] ) );
         int16_t new_angle = calc_new_angle ( cliff );
-        if ( datas[4] ) {
+        if ( concat_bytes ( datas[0], datas[1] )> 3000 ) {
                 char* string1 = "GOAL";
                 set_Display ( string1 );
                 stop();
                 return;
         }
-        char string[6];
 	int8_t j = 0;
         for ( int8_t i= 0; i< 6; i++ ) {
                 l_bumpers[i] = concat_bytes ( datas[2*i+5],datas[2*i+6] );
