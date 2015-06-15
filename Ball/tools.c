@@ -57,3 +57,7 @@ void string_concat ( char* name, char* value, char* result )
 int16_t rand_tools(int16_t start, int16_t end){
   return rand()%(end-start + 1) + start;
 }
+int16_t mod(int16_t value, int16_t div){
+
+  return value > 0 ? value % div : -((-value) % div);
+}

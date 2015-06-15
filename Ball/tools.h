@@ -68,4 +68,5 @@ void number2Hex ( uint16_t value, char* result );
 void string_concat ( char* name, char* value, char* result );
 
 int16_t rand_tools(int16_t start, int16_t end);
+int16_t mod(int16_t value, int16_t div);
 #endif

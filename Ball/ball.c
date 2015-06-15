@@ -18,7 +18,7 @@ void initialize_ball()
 {
         get_angle();
         srand ( coder_values_r() );
-       // turn ( rand() %40-20 );
+        turn ( rand() %40-20 );
 }
 
 int8_t is_wall()
@@ -43,14 +43,21 @@ int8_t check_side ( uint16_t cliffL, uint16_t cliffR )
         int16_t difference = ( int16_t ) ( cliffL - cliffR );
 	if(cliffL < 2000 && cliffR < 2000)
 	  return NO_CLIFF;
-        if ( difference > 400 ) {
-		//char t_string[6] = {0}; 
-		//number2Hex(cliffL,t_string);
-		//set_Display(t_string);
-		//stop();
-		//my_msleep(20000);
+	else if(cliffL > 3000 || cliffR > 3000)
+	  return NO_CLIFF;
+        if ( difference > 400 ) {/*
+		char t_string[6] = {0}; 
+		number2Hex(difference,t_string);
+		set_Display(t_string);
+		stop();
+		my_msleep(20000);*/
                 return CLIFF_L;
-        } else if ( difference < -400 ) {
+        } else if ( difference < -400 ) {/*
+	  char t_string[6] = {0}; 
+		number2Hex(difference,t_string);
+		set_Display(t_string);
+		stop();
+		my_msleep(20000);*/
                 return CLIFF_R;
         } else {
                 return NO_CLIFF;
@@ -63,18 +70,16 @@ int16_t calc_new_angle ( int8_t cliff )
                 return 0;
 
         int16_t angle_change = get_angle();
-        angle = ( angle + angle_change ) % 360;
+        angle = mod(( angle + angle_change ) , 360);
 
-        //char string[6];
-        //number2String(angle, string);
-        //set_Display(string);
+
 
         if ( cliff == CLIFF_L ) {
-                return - ( ( 2*angle ) % 180 );
+                return - (mod( ( 2*angle ),180));
         }
 
         if ( cliff == CLIFF_R ) {
-                return ( ( 2*angle ) % 180 );
+                return ( mod( 2*angle ,180 ));
         }
 
         return 0;
@@ -108,11 +113,20 @@ void drive_ball ( int16_t velocity )
         multiple_sensors ( packetIDs, datas, 18, 10 );
 	char string[6] = {0};
         int8_t cliff =  check_side ( concat_bytes ( datas[0], datas[1] ),concat_bytes ( datas[2], datas[3] ) );
+	if(cliff){
+	  stop();
+	  drive_roomba(10,velocity);
+	  multiple_sensors(packetIDs,datas,18,10);
+	}
+	
         int16_t new_angle = calc_new_angle ( cliff );
         if ( concat_bytes ( datas[0], datas[1] )> 3000 ) {
                 char* string1 = "GOAL";
                 set_Display ( string1 );
                 stop();
+		my_msleep(2000);
+		//turn(angle);
+		drive_roomba_clicks(1000, angle > 0 ? -100 : 100);
                 return;
         }
 	int8_t j = 0;
@@ -131,12 +145,18 @@ void drive_ball ( int16_t velocity )
         }
         if ( datas[17] & BUMP_RIGHT || datas[17] & BUMP_LEFT )
                 stop();
+	/*
         char test[6];
 	number2String(angle,test);
 	set_Display(test);
-
+	*/
         if(new_angle)
         {
+		 char t_string[6] = {0}; 
+		number2StringSigned(new_angle,t_string);
+		set_Display(t_string);
+		stop();
+		my_msleep(2000);
         	stop();
         	turn(new_angle);
         	//set_Display("    ");
