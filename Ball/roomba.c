@@ -70,7 +70,7 @@ void stop()
                 send_byte_roomba ( ( uint8_t ) 0 );
                 send_byte_roomba ( ( uint8_t ) 0 );
         }
-        my_msleep ( 200 );
+        my_msleep(150);
 }
 
 void drive_roomba ( uint16_t distance, int16_t velocity )
@@ -97,7 +97,7 @@ void drive_roomba_clicks ( uint16_t distance, int16_t velocity )
 
         drive ( velocity );
 
-        my_msleep ( 200 );
+        my_msleep ( 150 );
 
         while ( counter < clicks_finish ) {
                 read_values ( 43, ticks_r, 2 );
