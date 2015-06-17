@@ -123,15 +123,7 @@ void drive_ball ( int16_t velocity )
 
         int16_t new_angle = calc_new_angle ( cliff );
         if ( concat_bytes ( datas[0], datas[1] ) > 3000 ) {
-                char* string1 = "GOAL";
-                set_Display ( string1 );
-                stop();
-                my_msleep ( 2000 );
-                turn2(-(90 - ((angle + get_angle())%180)), 200);
-		my_msleep(30);
-		turn2(180,200);
-		drive_roomba_clicks(1000,velocity);
-		my_msleep(2000);
+                start_after_won();
                 return;
         }
         int8_t j = 0;
@@ -154,13 +146,31 @@ void drive_ball ( int16_t velocity )
         char test[6];
         number2String ( angle,test );
         set_Display ( test );
-        if ( new_angle ) {/*
-                char t_string[6] = {0};
-                number2StringSigned ( new_angle,t_string );
-                set_Display ( t_string );*/
+        if ( new_angle ) {
+                /*
+                        char t_string[6] = {0};
+                        number2StringSigned ( new_angle,t_string );
+                        set_Display ( t_string );*/
                 stop();
                 turn2 ( new_angle, 200 );
                 //set_Display("    ");
         }
         my_msleep ( 30 );
 }
+void start_after_won()
+{
+        char* string1 = "GOAL";
+        set_Display ( string1 );
+        stop();
+        uint8_t ir_value;
+        do {
+                read_values ( 17, &ir_value, 1 );
+                if ( ir_value == IR_RIGHT )
+                        drive ( 100 );
+                else if ( ir_value == IR_LEFT )
+                        turn2 ( 5,100 );
+                else
+                        stop();
+        } while ( ir_value != IR_ON_OFF );
+}
+

@@ -28,4 +28,6 @@ void drive_ball ( int16_t velocity );
 
 int16_t is_pong(uint16_t* value);
 
+void start_after_won();
+
 #endif
