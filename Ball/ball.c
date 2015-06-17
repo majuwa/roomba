@@ -1,10 +1,36 @@
 #include "ball.h"
-#include "tools.h"
-#include "roomba.h"
-#include "usart.h"
+#include "../lib/tools.h"
+#include "../lib/roomba.h"
+#include "../lib/usart.h"
 #include <stdlib.h>
+#include "../lib/RFM12B.h"
 int16_t angle = 0;
-
+char points_goal_0 = '0';
+char waitForAck ( uint8_t receiver )
+{
+        my_msleep ( 50 );
+        if ( ACKReceived ( receiver ) )
+                return 1;
+        return 0;
+}
+void send_user_data ( uint8_t goal_id )
+{
+        points_goal_0++;
+        if ( points_goal_0 > '9' )
+                set_Display ( "Lost" );
+        int interPacketDelay = 50;
+        uint8_t sendSize = 2;
+        char requestACK = 1;
+        char payload[2] = {0};
+        payload[0] = points_goal_0;
+	set_Display("Wait");
+        //do {
+                Send ( goal_id, payload, sendSize + 1, requestACK );
+		if(waitForAck(goal_id))
+		    set_Display("send");
+        //} while (!waitForAck ( goal_id ) );
+	set_Display("send");
+}
 int16_t get_angle()
 {
         int8_t data_byte[2];
@@ -42,10 +68,6 @@ int8_t is_wall()
 int8_t check_side ( uint16_t cliffL, uint16_t cliffR )
 {
         int16_t difference = ( int16_t ) ( cliffL - cliffR );
-        if ( cliffL < 1000 && cliffR < 1000 )
-                return NO_CLIFF;
-        else if ( cliffL > 3000 || cliffR > 3000 )
-                return NO_CLIFF;
         if ( difference > 400 ) {
                 /*
                 	char t_string[6] = {0};
@@ -110,35 +132,29 @@ int16_t is_pong ( uint16_t* value )
 }
 void drive_ball ( int16_t velocity )
 {
-        uint8_t packetIDs [] = {29, 30,13,46,47,48,49,50,51,7};
-        uint8_t datas [18];
+        uint8_t packetIDs [] = {29, 30,13,46,47,48,49,50,51,7,13};
+        uint8_t datas [19];
         uint16_t l_bumpers[6];
-        multiple_sensors ( packetIDs, datas, 18, 10 );
+        multiple_sensors ( packetIDs, datas, 19, 11 );
         char string[6] = {0};
         int8_t cliff =  check_side ( concat_bytes ( datas[0], datas[1] ),concat_bytes ( datas[2], datas[3] ) );
-        number2Hex ( concat_bytes ( datas[0], datas[1] ),string );
-        set_Display ( string );
         if ( cliff ) {
-                stop();
-                drive_roomba_clicks ( 30,velocity );
-                multiple_sensors ( packetIDs,datas,18,10 );
+                if ( !datas[18] ) {
+                        start_after_won();
+                        return;
+                }
+                int16_t new_angle = calc_new_angle ( cliff );
+                if ( new_angle ) {
 
-                number2Hex ( concat_bytes ( datas[0], datas[1] ),string );
-                set_Display ( string );
-        }
+                        char t_string[6] = {0};
+                        number2StringSigned ( angle,t_string );
+                        //set_Display ( t_string );
+                        stop();
+                        turn2 ( new_angle, 200 );
+                        //set_Display("    ");
+                        return;
+                }
 
-        int16_t new_angle = calc_new_angle ( cliff );
-        if ( concat_bytes ( datas[0], datas[1] ) > 3000 ) {
-                start_after_won();
-                return;
-        } else if ( new_angle ) {
-
-                char t_string[6] = {0};
-                number2StringSigned ( angle,t_string );
-                //set_Display ( t_string );
-                stop();
-                turn2 ( new_angle, 200 );
-                //set_Display("    ");
         }
         int8_t j = 0;
         for ( int8_t i= 0; i< 6; i++ ) {
@@ -162,16 +178,18 @@ void drive_ball ( int16_t velocity )
         number2String ( angle,test );
         set_Display ( test );*/
 
-       // my_msleep ( 30 );
+        // my_msleep ( 30 );
 }
 void start_after_won()
 {
         char* string1 = "GOAL";
         set_Display ( string1 );
         stop();
-        uint8_t ir_value;/*
-	send_byte_roomba(151);
-	send_byte_roomba(IR_0);*/
+        uint8_t ir_value;
+        send_user_data ( 2 );
+        /*
+        send_byte_roomba(151);
+        send_byte_roomba(IR_0);*/
         do {
                 read_values ( 17, &ir_value, 1 );
                 if ( ir_value == IR_RIGHT )
@@ -182,4 +200,5 @@ void start_after_won()
                         stop();
         } while ( ir_value != IR_ON_OFF );
 }
+
 

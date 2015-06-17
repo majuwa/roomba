@@ -1,9 +1,9 @@
 #include <avr/io.h>
-#include "usart.h"
-#include "roomba.h"
-#include "tools.h"
-#include "pong.h"
+#include "../lib/usart.h"
+#include "../lib/roomba.h"
+#include "../lib/tools.h"
 #include "ball.h"
+#include "../lib/RFM12B.h"
 
 int main ( int argc, char* argv[] )
 {
@@ -11,6 +11,9 @@ int main ( int argc, char* argv[] )
         roomba_init();
         while ( !read_button ( BUTTON_CLEAN ) );
         initialize_ball();
+
+        Initialize ( 1,20 );
+
 
         while ( 1 ) {
                 drive ( 300 );

@@ -1,25 +1,23 @@
 #include "pong.h"
-#include "roomba.h"
-#include "tools.h"
+#include "../lib/roomba.h"
+#include "../lib/tools.h"
+#include "../lib/RFM12B.h"
+#include <string.h>
 int16_t max_r;
 uint16_t start_counter;
 uint16_t end_counter;
 uint8_t id;
 uint8_t points;
 uint8_t points_enemy;
-void pong_show_points(){
-      char t[6];
-      number2String(points,t);
-      set_Display(t);
-}
+char* my_points[2] = {0};
 void initialize_pong()
 {
-	points = 0;
+        points = 0;
         start_counter = coder_values_r();
         uint16_t return_value = 0;
         uint8_t ir_value;
-	id = IR_0;
-	/*
+        id = IR_0;
+        /*
         set_Display ( "ID??" );
         do {
                 read_values ( 17,&ir_value,1 );
@@ -34,7 +32,7 @@ void initialize_pong()
         } while ( ir_value != IR_RIGHT );
         end_counter = coder_values_r();
         max_r = ( int16_t ) ( end_counter - start_counter );
-	pong_show_points();
+        // pong_show_points();
 }
 void drive_pong()
 {
@@ -57,12 +55,25 @@ void drive_pong()
                         drive ( PONG_SPEED );
                 else if ( ir_value == IR_DOWN )
                         drive ( - PONG_SPEED );
-		else if(ir_value == id){
-		  points++;
-		  pong_show_points();
-		}
+
                 else
                         stop();
         }
-        pong_show_points();
+        getData();
+
+}
+void getData()
+{
+
+        if ( ReceiveComplete() ) {
+                set_Display ( "Wait" );
+                if ( CRCPass() ) {
+                        memcpy ( my_points,Data,2 );
+                        set_Display ( my_points );
+                        if ( ACKRequested() ) {
+                                SendACK();
+                        }
+                }
+
+        }
 }
