@@ -16,8 +16,8 @@ int main ( int argc, char* argv[] )
 
 
         while ( 1 ) {
-                drive ( 300 );
-                drive_ball ( 300 );
+                drive ( 500 );
+                drive_ball ( 500 );
         }
         return 0;
 }
