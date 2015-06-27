@@ -66,7 +66,6 @@ void getData()
 {
 
         if ( ReceiveComplete() ) {
-                set_Display ( "Wait" );
                 if ( CRCPass() ) {
                         memcpy ( my_points,Data,2 );
                         set_Display ( my_points );

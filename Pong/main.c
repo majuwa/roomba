@@ -8,6 +8,7 @@ int main ( int argc, char* argv[] )
 {
   uint8_t id_2;
   uint8_t id_3;
+	
         usart_init_roomba();
         roomba_init();
 	do{

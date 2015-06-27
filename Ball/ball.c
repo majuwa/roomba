@@ -4,6 +4,7 @@
 #include "../lib/usart.h"
 #include <stdlib.h>
 #include "../lib/RFM12B.h"
+#include "../lib/music.h"
 int16_t angle = 0;
 char points_goal_0 = '0';
 char points_goal_1= '0';
@@ -119,11 +120,11 @@ int16_t calc_new_angle ( int8_t cliff )
 
         update_angle();
         if ( cliff == CLIFF_L ) {
-                return - 2 * ( angle % 90 );
+                return - 2 * ( angle % 90 + rand_tools(-5,5) );
         }
 
         if ( cliff == CLIFF_R ) {
-                return 2* ( 90- ( angle%90 ) );
+                return 2* ( 90- ( angle%90  + rand_tools(-5,5)) );
         }
 
         return 0;
@@ -132,7 +133,7 @@ int16_t is_pong ( uint16_t* value )
 {
         if ( value[2] > 600 || value[3] > 600 ) {
                 //set_Display ( "Cent" );
-                return rand_tools ( 170,190 );
+                return rand_tools ( 150,210 );
         } else if ( value[1] > 400 ) {
                 //set_Display ( "F-Lef" );
                 return -rand_tools ( 120, 160 );
@@ -162,6 +163,8 @@ void drive_ball ( int16_t velocity )
         char string[6] = {0};
         int8_t cliff =  check_side ( concat_bytes ( datas[0], datas[1] ),concat_bytes ( datas[2], datas[3] ) );
         if ( cliff ) {
+		my_msleep(100);
+		multiple_sensors ( packetIDs, datas, 19, 11 );
                 if ( !datas[18] ) {
                         start_after_won();
                         return;
@@ -173,7 +176,7 @@ void drive_ball ( int16_t velocity )
                         number2StringSigned ( angle,t_string );
                         //set_Display ( t_string );
                         stop();
-                        turn2 ( new_angle, 300 );
+                        turn2 ( new_angle, 100 );
                         //set_Display("    ");
                         return;
                 }
@@ -191,7 +194,7 @@ void drive_ball ( int16_t velocity )
         int16_t turn_value = is_pong ( l_bumpers );
         if ( turn_value!=0 ) {
                 stop();
-                turn2 ( turn_value, 300 );
+                turn2 ( turn_value, 100 );
                // set_Display ( "pong" );
         }
         if ( datas[17] & BUMP_RIGHT || datas[17] & BUMP_LEFT )
@@ -214,21 +217,23 @@ void start_after_won()
         send_byte_roomba(151);
         send_byte_roomba(IR_0);*/
 	int16_t tmp_angle = angle;
+	play_songs();
         do {
-                read_values ( 17, &ir_value, 1 );
-                if ( ir_value == IR_RIGHT )
+                
+                if ( read_button(BUTTON_SPOT) )
                         drive_circle(-1, 100);
-                else if ( ir_value == IR_LEFT )
+                else if ( read_button(BUTTON_DOCK))
                         //turn2 ( 5,100 );
 			drive_circle(1, 100);
                 else
                         stop();
-        } while ( ir_value != IR_ON_OFF );
+        } while ( !read_button(BUTTON_CLEAN) );
 	update_angle();
 	if(tmp_angle<90 || tmp_angle > 270)
 	  angle = 180;
 	else
 	  angle = 0;
+	turn2(rand_tools(-30,30),100);
 }
 
 

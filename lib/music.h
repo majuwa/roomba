@@ -1,9 +1,9 @@
 #ifndef MUSIC_H_INCLUDED
 #define MUSIC_H_INCLUDED
 
-#include <usart.h>
+#include "usart.h"
 #include <avr/io.h>
-#include <tools.h>
+#include "tools.h"
 
 #define R 30
 
