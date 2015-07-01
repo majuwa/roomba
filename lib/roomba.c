@@ -4,6 +4,12 @@
 #include <math.h>
 #include <stdlib.h>
 
+uint8_t read_ir(void){
+    uint8_t ir_value;
+    read_values ( 17, &ir_value, 1 );
+    return ir_value;
+    
+}
 void roomba_init()
 {
         send_byte_roomba ( 128 );
@@ -170,6 +176,22 @@ uint16_t read_user_input ( void )
         set_Display ( "COOL" );
 
         return return_value;
+}
+char read_user_input_single ( void )
+{
+        char string[] = "-   ";
+        set_Display ( string );
+        uint8_t ir_value;
+        do {
+                read_values ( 17, &ir_value, 1 );
+                if ( IR_0 <= ir_value && ir_value <= ( IR_0 + 10 )) {
+                        string[0] = ir_value - IR_0 + '0';
+                        set_Display ( string );
+                        my_msleep ( 200 );
+                }
+        } while ( ir_value != IR_RIGHT );
+
+        return string[0];
 }
 
 void drive_circle ( uint16_t radius, uint16_t velocity )

@@ -8,6 +8,7 @@
 int16_t angle = 0;
 char points_goal_0 = '0';
 char points_goal_1= '0';
+char max_points = 0;
 void update_angle()
 {
         int16_t angle_change = get_angle();
@@ -19,6 +20,19 @@ char waitForAck ( uint8_t receiver )
         if ( ACKReceived ( receiver ) )
                 return 1;
         return 0;
+}
+void send_start_points()
+{
+        int interPacketDelay = 50;
+        uint8_t sendSize = 2;
+        char requestACK = 1;
+        char payload[2] = {0};
+        payload[0] = points_goal_0;
+        Send ( 2, payload, sendSize + 1, requestACK );
+        if ( waitForAck ( 2 ) );
+	my_msleep(200);
+        Send ( 3, payload, sendSize + 1, requestACK );
+        if ( waitForAck ( 3 ) );
 }
 void send_user_data ( )
 {
@@ -41,9 +55,10 @@ void send_user_data ( )
                 payload[0] = ++points_goal_1;
                 goal_id = 3;
         }
+        /*
         char test[6];
         number2String ( angle,test );
-        set_Display ( test );
+        set_Display ( test );*/
         //do {
         Send ( goal_id, payload, sendSize + 1, requestACK );
         if ( waitForAck ( goal_id ) );
@@ -65,31 +80,18 @@ int16_t get_angle()
 
 void initialize_ball()
 {
+        save_songs();
+        send_start_points();
         get_angle();
         srand ( coder_values_r() );
         turn2 ( rand() %40-20,300 );
 }
 
-int8_t is_wall()
-{
-        uint8_t data_byte[2];
-        uint16_t wall_sensor;
-        read_values ( 27,data_byte,2 );
-        wall_sensor = concat_bytes ( data_byte[0], data_byte[1] );
-        //if ( wall_sensor>WALL_VALUE ) {
-        //return 1;
-        //} else {
-        //return 0;
-        //}
-        char string [6];
-        number2String ( wall_sensor, string );
-        set_Display ( string );
-        return 0;// wall_sensor;
-}
-
 int8_t check_side ( uint16_t cliffL, uint16_t cliffR )
 {
         int16_t difference = ( int16_t ) ( cliffL - cliffR );
+	if(cliffL < 1200 && cliffR < 1200)
+	  return NO_CLIFF;
         if ( difference > 300 ) {
                 /*
                 	char t_string[6] = {0};
@@ -120,11 +122,11 @@ int16_t calc_new_angle ( int8_t cliff )
 
         update_angle();
         if ( cliff == CLIFF_L ) {
-                return - 2 * ( angle % 90 + rand_tools(-5,5) );
+                return - 2 * ( angle % 90 + rand_tools ( -5,5 ) );
         }
 
         if ( cliff == CLIFF_R ) {
-                return 2* ( 90- ( angle%90  + rand_tools(-5,5)) );
+                return 2* ( 90- ( angle%90  + rand_tools ( -5,5 ) ) );
         }
 
         return 0;
@@ -154,30 +156,38 @@ void drive_ball ( int16_t velocity )
 {
         uint8_t packetIDs [] = {29, 30,13,46,47,48,49,50,51,7,13};
         update_angle();
+        /*
         char test[6];
         number2String ( angle,test );
-        set_Display ( test );
+        set_Display ( test );*/
         uint8_t datas [19];
         uint16_t l_bumpers[6];
         multiple_sensors ( packetIDs, datas, 19, 11 );
         char string[6] = {0};
         int8_t cliff =  check_side ( concat_bytes ( datas[0], datas[1] ),concat_bytes ( datas[2], datas[3] ) );
         if ( cliff ) {
-		my_msleep(100);
-		multiple_sensors ( packetIDs, datas, 19, 11 );
+                for ( int8_t i = 0; i< IR_TEST_VALUE; i++ ) {
+                        uint8_t test_ir;
+                        read_values ( 13, &test_ir, 1 );
+                        if ( test_ir ) {
+                                datas[18] = 1;
+                                i = IR_TEST_VALUE;
+                        }
+                }
+
                 if ( !datas[18] ) {
                         start_after_won();
                         return;
                 }
                 int16_t new_angle = calc_new_angle ( cliff );
                 if ( new_angle ) {
-
+			set_Display("Pong");
                         char t_string[6] = {0};
                         number2StringSigned ( angle,t_string );
                         //set_Display ( t_string );
                         stop();
                         turn2 ( new_angle, 100 );
-                        //set_Display("    ");
+                        set_Display("    ");
                         return;
                 }
 
@@ -195,7 +205,7 @@ void drive_ball ( int16_t velocity )
         if ( turn_value!=0 ) {
                 stop();
                 turn2 ( turn_value, 100 );
-               // set_Display ( "pong" );
+                // set_Display ( "pong" );
         }
         if ( datas[17] & BUMP_RIGHT || datas[17] & BUMP_LEFT )
                 stop();
@@ -204,36 +214,60 @@ void drive_ball ( int16_t velocity )
         number2String ( angle,test );
         set_Display ( test );*/
 
-        // my_msleep ( 30 );
+// my_msleep ( 30 );
 }
 void start_after_won()
 {
         char* string1 = "GOAL";
-        //set_Display ( string1 );
+        set_Display ( string1 );
         stop();
-        uint8_t ir_value;
         send_user_data ();
+        my_msleep ( 1000 );
+        if ( points_goal_0 >=max_points || points_goal_1 >= max_points ) {
+                if ( points_goal_0 > points_goal_1 ) {
+                        do {
+                                set_Display ( "Pla1" );
+                                my_msleep ( 1000 );
+                                set_Display ( "wins" );
+                                my_msleep ( 1000 );
+                        } while ( 1 );
+                } else {
+                        do {
+                                set_Display ( "Pla2" );
+                                my_msleep ( 1000 );
+                                set_Display ( "wins" );
+                                my_msleep ( 1000 );
+                        } while ( 1 );
+                }
+                points_goal_0 = '0';
+                points_goal_1 = '0';
+                return;
+        }
         /*
         send_byte_roomba(151);
         send_byte_roomba(IR_0);*/
-	int16_t tmp_angle = angle;
-	play_songs();
+        int16_t tmp_angle = angle;
+        play_songs();
         do {
-                
-                if ( read_button(BUTTON_SPOT) )
-                        drive_circle(-1, 100);
-                else if ( read_button(BUTTON_DOCK))
-                        //turn2 ( 5,100 );
-			drive_circle(1, 100);
+
+                if ( read_button ( BUTTON_SPOT ) )
+                        drive_circle ( -1, 100 );
+                else if ( read_button ( BUTTON_DOCK ) )
+                        drive_circle ( 1, 100 );
                 else
                         stop();
-        } while ( !read_button(BUTTON_CLEAN) );
-	update_angle();
-	if(tmp_angle<90 || tmp_angle > 270)
-	  angle = 180;
-	else
-	  angle = 0;
-	turn2(rand_tools(-30,30),100);
+        } while ( !read_button ( BUTTON_CLEAN ) );
+        update_angle();
+        if ( tmp_angle<90 || tmp_angle > 270 )
+                angle = 180;
+        else
+                angle = 0;
+        turn2 ( rand_tools ( -30,30 ),100 );
+	set_Display("    ");
+}
+void set_max_points ( char max )
+{
+        max_points = max;
 }
 
 

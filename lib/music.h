@@ -48,8 +48,16 @@
  
 #define MEASURE_TIME MEASURE/64
 
+/**
+ * Save sample songs at the roomba
+ */
 void save_songs(void);
 
+/**
+ * Plays the first song, which is saved.
+ * To use this function you have to run save_songs first
+ * @see save_songs 
+ */
 void play_songs(void);
 
 #endif

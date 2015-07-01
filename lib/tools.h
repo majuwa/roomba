@@ -41,13 +41,20 @@ int16_t concat_bytes_signed ( int8_t high, int8_t low );
 void split_bytes ( int16_t value, int8_t* result );
 
 /**
- * transforms a number into a string for output on display
+ * transforms a unsigned number into a string for output on display
  *
- * @param value the 16bit number
+ * @param value the 16bit u-number
  * @param result char pointer for result string, must have reserved space for 6 bytes
+ * @see numer2StringSigned()  for signed
  */
 void number2String ( uint16_t value, char* result );
-
+/**
+ * transform a signed number into a string for output on display
+ * 
+ * @param value the 16bit number
+ * @param result char pointer for result string, must have reserved space for 6bytes
+ * @see number2String for unsigned
+ */
 void number2StringSigned ( int16_t value, char* result );
 
 /**
@@ -66,7 +73,17 @@ void number2Hex ( uint16_t value, char* result );
  * @param result char pointer for result string, must have reserved enough space
  */
 void string_concat ( char* name, char* value, char* result );
-
+/**
+ * Generate a random int16_t Integer between start and end
+ * @param start int16 start-value
+ * @param end int16 end-value
+ * @return random int16
+ */
 int16_t rand_tools(int16_t start, int16_t end);
+/**
+ * Calculates a corrct version of % (=modulo)
+ * @param value int16 the dividend
+ * @param div int16 divisor
+ */
 int16_t mod(int16_t value, int16_t div);
 #endif

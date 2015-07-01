@@ -26,7 +26,16 @@
 
 #include <avr/io.h>
 
+/**
+ * Similiar function to read_values, just with signed values
+ * @see read_values
+ */
 void read_values_signed ( uint8_t packetid, int8_t* data, uint8_t length );
+/**
+ * Similiar to read_values, but just read one digit
+ * @see read_values
+ */
+char read_user_input_single ( void );
 
 /**
  * initializes Roomba (sets start and safe mode)
@@ -179,8 +188,23 @@ uint8_t p_follow_line ( uint16_t cliffLeft, uint16_t cliffRight, int16_t velocit
  */
 uint8_t pid_follow_line ( uint16_t cliffLeft, uint16_t cliffRight, int16_t velocity );
 
+/**
+ * Read the coder values from the right encoder
+ * @return uint16 with the current encoder value
+ */
 uint16_t coder_values_r ( void );
 
+/**
+ * Improved turn function with velocity. This function uses both coder;
+ * @param degree degree to turn
+ * @param velocity standard driving velocity
+ * @see turn
+ */
 void turn2 ( int16_t degree, int16_t velocity );
+/**
+ * Reads a single ir-value and return its value
+ * @return uint8 value with the ir-code
+ */
+uint8_t read_ir(void);
 
 #endif
