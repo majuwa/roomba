@@ -444,10 +444,19 @@ uint8_t pid_follow_line ( uint16_t cliffLeft, uint16_t cliffRight, int16_t veloc
         return 0;
 }
 
-uint16_t coder_values_r ( void )
+uint16_t coder_values_r ()
 {
-        uint8_t ticks_r[2];
-        read_values ( 43, ticks_r, 2 );
-        return  concat_bytes ( ticks_r[0], ticks_r[1] );
+        return  coder_values(1);
 }
 
+uint16_t coder_values_l ()
+{
+		return coder_values(0);
+}
+
+uint16_t coder_values(uint8_t side)
+{
+	uint8_t ticks[2];
+	read_values( 43 + side, ticks, 2);
+	return concat_bytes(ticks[0], ticks[1]);
+}

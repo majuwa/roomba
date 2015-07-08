@@ -189,10 +189,23 @@ uint8_t p_follow_line ( uint16_t cliffLeft, uint16_t cliffRight, int16_t velocit
 uint8_t pid_follow_line ( uint16_t cliffLeft, uint16_t cliffRight, int16_t velocity );
 
 /**
- * Read the coder values from the right encoder
+ * Read the coder value from the right encoder
  * @return uint16 with the current encoder value
  */
 uint16_t coder_values_r ( void );
+
+/**
+ * Read the coder value from the left encoder
+ * @return uint16 with the current encoder value
+ */
+uint16_t coder_values_l ( void );
+
+/**
+ * Read the coder value from the left or right encoder
+ * @param side right encoder (0) or left encoder (1)
+ * @return uint16 with the current encoder value
+ */
+uint16_t coder_values(uint8_t side);
 
 /**
  * Improved turn function with velocity. This function uses both coder;
