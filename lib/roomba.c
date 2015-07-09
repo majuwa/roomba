@@ -14,6 +14,7 @@ void roomba_init()
 {
         send_byte_roomba ( 128 );
         send_byte_roomba ( 131 );
+        my_msleep(500);
 }
 
 void set_Display ( char *data )
