@@ -19,14 +19,14 @@
 /**
  * send the initial points to all pongs
  */
-void send_start_points(void);
+void send_start_points ( void );
 /**
  * Get the current angle in the game
  * @return int16 angle in degree
  */
 int16_t get_angle ( void );
 /**
- * Initialation of ball 
+ * Initialation of ball
  * -> initialize radio
  * -> reset angle
  * -> set the sounds
@@ -50,52 +50,52 @@ int16_t calc_new_angle ( int8_t cliff );
 /**
  * Moves the ball and does all necessary checking
  */
-void drive_ball (void);
+void drive_ball ( void );
 
 /**
  * Collision detection with pong.
  * @param value values of the light-bumper 6 uint16 value in order from left to right for more details look at the roomba manual
  * @return 0 if no pong else a value != 0 with a angle in degree. the angle is calcuted according to the sensor values and little random offset
  */
-int16_t check_lightbump (uint16_t* value);
+int16_t check_lightbump ( uint16_t* value );
 /**
  * Set Display to "Goal" increase the points for one users, check if game was won and if yes stops the game
  */
-void start_after_goal(void);
+void start_after_goal ( void );
 /**
  * Checks after a goal if the maximum score was reached by one player
  */
-void check_win(void);
+void check_win ( void );
 /**
  * Displays win of one player on Roomba display
  * @param winner char-string of the player who won, e.g. "PL-1" or "PL-2"
  */
-void display_win (char* winner);
+void display_win ( char* winner );
 /**
  * Prepare ball for serve after a goal. User must turn Roomba into a straight position with SPOT and DOCK buttons
  */
-void user_prepare_serve(void);
+void user_prepare_serve ( void );
 /**
  * Reads angle turned since last call and updates intern angle counter
  */
-void update_angle(void);
+void update_angle ( void );
 /**
  * Sends new score of user to pong-Roombas after a goal
  */
-void send_user_data (void);
+void send_user_data ( void );
 /**
  * Turns if side line was detected or counts a goal if goal line was detected
  * @param cliff the cliff-value calculated in check_cliff(...) ("CLIFF_L", "CLIFF_R", "NO_CLIFF")
  */
-void handle_cliff(uint8_t cliff);
+void handle_cliff ( uint8_t cliff );
 /**
- * Turns if pong was detected 
+ * Turns if pong was detected
  * @param light_bumpers the light bumper values
  */
-void handle_lightbumpers(uint16_t* light_bumpers);
+void handle_lightbumpers ( uint16_t* light_bumpers );
 /**
  * Set the max points to win the game max '9' via IR remote
  */
-void set_max_points(void);
+void set_max_points ( void );
 
 #endif

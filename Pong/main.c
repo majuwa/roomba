@@ -9,13 +9,13 @@ int main ( int argc, char* argv[] )
 {
         usart_init_roomba();
         roomba_init();
-        
-		setID();
+
+        setID();
         initialize_pong();
-        
+
         while ( 1 )
                 drive_pong();
-                
-           
+
+
         return 0;
 }

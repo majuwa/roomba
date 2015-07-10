@@ -7,18 +7,18 @@
 #include "../lib/music.h"
 int main ( int argc, char* argv[] )
 {
-    usart_init_roomba();
-    roomba_init();
-    
-	set_max_points();
-	
-	initialize_ball();
+        usart_init_roomba();
+        roomba_init();
 
-	drive(BALL_SPEED);
+        set_max_points();
 
-    while ( 1 ) {
-         drive_ball();
-    }
+        initialize_ball();
 
-    return 0;
+        drive ( BALL_SPEED );
+
+        while ( 1 ) {
+                drive_ball();
+        }
+
+        return 0;
 }
